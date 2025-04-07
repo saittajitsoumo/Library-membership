@@ -1,0 +1,223 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.*;
+import java.util.List;
+
+public class Membership {
+    private JFrame frame;
+    private Container c;
+    private Font f;
+    private Cursor cursor;
+
+    private String userName, userEmail, userID, userPhone;
+    private int membershipID;
+
+    public Membership() {
+        frame = new JFrame("Library Membership");
+        c = frame.getContentPane();
+        c.setLayout(null);
+        c.setBackground(new Color(144, 238, 144));
+
+        frame.setBounds(500, 200, 700, 500);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setResizable(false);
+        frame.setLocationRelativeTo(null);
+
+        f = new Font("Arial", Font.BOLD, 18);
+        cursor = new Cursor(Cursor.HAND_CURSOR);
+
+        JLabel label1 = new JLabel("DO YOU NEED LIBRARY MEMBERSHIP CARD?");
+        label1.setFont(f);
+        label1.setBounds(50, 20, 600, 50);
+        frame.add(label1);
+
+        JButton yesBtn = new JButton("YES");
+        yesBtn.setFont(f);
+        yesBtn.setBounds(50, 80, 100, 50);
+        yesBtn.setCursor(cursor);
+        yesBtn.setBackground(new Color(46, 139, 87));
+        yesBtn.setForeground(Color.WHITE);
+        frame.add(yesBtn);
+
+        JButton noBtn = new JButton("NO");
+        noBtn.setFont(f);
+        noBtn.setBounds(160, 80, 100, 50);
+        noBtn.setCursor(cursor);
+        noBtn.setBackground(new Color(255, 99, 71));
+        noBtn.setForeground(Color.WHITE);
+        frame.add(noBtn);
+
+        noBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JOptionPane.showMessageDialog(frame, "Thank you.");
+                System.exit(0);
+            }
+        });
+
+        yesBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showForm();
+            }
+        });
+
+        frame.setVisible(true);
+    }
+
+    private void showForm() {
+        JTextField nameField = new JTextField(15);
+        JTextField emailField = new JTextField(15);
+        JTextField idField = new JTextField(15);
+        JTextField phoneField = new JTextField(15);
+
+        JPanel panel = new JPanel(new GridLayout(4, 2, 5, 5));
+        panel.add(new JLabel("Name:"));
+        panel.add(nameField);
+        panel.add(new JLabel("Email:"));
+        panel.add(emailField);
+        panel.add(new JLabel("ID:"));
+        panel.add(idField);
+        panel.add(new JLabel("Phone:"));
+        panel.add(phoneField);
+
+        int result = JOptionPane.showConfirmDialog(null, panel, "Enter Your Information", JOptionPane.OK_CANCEL_OPTION);
+
+        if (result == JOptionPane.OK_OPTION) {
+            userName = nameField.getText();
+            userEmail = emailField.getText();
+            userID = idField.getText();
+            userPhone = phoneField.getText();
+
+            showPaymentOptions();
+        }
+    }
+
+    private void showPaymentOptions() {
+        c.removeAll();
+        c.repaint();
+        c.revalidate();
+
+        JLabel payLabel = new JLabel("PLEASE SELECT PAYMENT METHOD:");
+        payLabel.setFont(f);
+        payLabel.setBounds(50, 80, 400, 50);
+        c.add(payLabel);
+
+        JButton bkashBtn = new JButton("Bkash");
+        bkashBtn.setBounds(50, 150, 120, 50);
+        bkashBtn.setFont(f);
+        bkashBtn.setForeground(Color.WHITE);
+        bkashBtn.setBackground(new Color(255, 20, 147));
+        bkashBtn.setCursor(cursor);
+        c.add(bkashBtn);
+
+        JButton nagadBtn = new JButton("Nagad");
+        nagadBtn.setBounds(180, 150, 120, 50);
+        nagadBtn.setFont(f);
+        nagadBtn.setForeground(Color.WHITE);
+        nagadBtn.setBackground(new Color(255, 102, 102));
+        nagadBtn.setCursor(cursor);
+        c.add(nagadBtn);
+        
+        bkashBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                processPayment("Bkash");
+            }
+        });
+        nagadBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                processPayment("Nagad");
+            }
+        });
+    }
+
+    private void processPayment(String method) {
+        Random random = new Random();
+        membershipID = 10000 + random.nextInt(90000);
+
+        JOptionPane.showMessageDialog(frame,
+                "You selected " + method + " for payment.\n\nYour Library Membership ID: " + membershipID);
+
+        openBookSelectionWindow();
+    }
+
+    private void openBookSelectionWindow() {
+        JFrame bookFrame = new JFrame("Select Books");
+        bookFrame.setSize(500, 400);
+        bookFrame.setLocationRelativeTo(null);
+        bookFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.setBackground(new Color(200, 220, 240));
+
+        JLabel label = new JLabel("Select Books:", SwingConstants.CENTER);
+        label.setFont(new Font("Arial", Font.BOLD, 22));
+        label.setForeground(new Color(0, 51, 102));
+        mainPanel.add(label, BorderLayout.NORTH);
+
+        String[] books = {
+            "The Great Gatsby", "To Kill a Mockingbird", "1984", 
+            "Pride and Prejudice", "Victory", "1971"
+        };
+
+        JList<String> bookList = new JList<>(books);
+        bookList.setFont(new Font("Arial", Font.PLAIN, 16));
+        bookList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+
+        JScrollPane scrollPane = new JScrollPane(bookList);
+        mainPanel.add(scrollPane, BorderLayout.CENTER);
+
+        JButton selectBtn = new JButton("Confirm Selection");
+        selectBtn.setFont(new Font("Arial", Font.BOLD, 16));
+        selectBtn.setForeground(Color.WHITE);
+        selectBtn.setBackground(new Color(0, 153, 76));
+        selectBtn.setFocusPainted(false);
+
+        selectBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                List<String> selectedBooks = new ArrayList<>(bookList.getSelectedValuesList());
+                if (selectedBooks.isEmpty()) {
+                    JOptionPane.showMessageDialog(bookFrame, "No books selected!");
+                } else {
+                    String[] options = {"7 Days", "14 Days", "30 Days"};
+                    String duration = (String) JOptionPane.showInputDialog(
+                            bookFrame,
+                            "How many days do you want to borrow the books?",
+                            "Select Duration",
+                            JOptionPane.QUESTION_MESSAGE,
+                            null,
+                            options,
+                            options[0]
+                    );
+
+                    if (duration != null) {
+                        String message = "Thank you for your membership!\n\n"
+                                + "Name: " + userName + "\n"
+                                + "Email: " + userEmail + "\n"
+                                + "ID: " + userID + "\n"
+                                + "Phone: " + userPhone + "\n"
+                                + "Membership ID: " + membershipID + "\n\n"
+                                + "Selected Books: " + String.join(", ", selectedBooks) + "\n"
+                                + "Duration: " + duration + "\n\n"
+                                + "We hope you enjoy your reading!\nThank you.";
+
+                        JOptionPane.showMessageDialog(bookFrame, message);
+                        bookFrame.dispose();
+                        frame.dispose();
+                    }
+                }
+            }
+        });
+
+        mainPanel.add(selectBtn, BorderLayout.SOUTH);
+        bookFrame.add(mainPanel);
+        bookFrame.setVisible(true);
+    }
+    public static void main(String[] args) {
+        new Membership();
+    }
+}
